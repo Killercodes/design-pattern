@@ -123,5 +123,64 @@ We evaluate each rule by calling its Evaluate method with the input number. If t
 
 Note that this implementation is very simple and is not intended to be used for complex rule-based systems. However, it provides a basic framework for defining and evaluating rules in C#.
 
+As we can see from the code above the func is always returning a bool after checking the conditon we can easily replace it with a Predicate as:
+    
+```cs
+void Main()
+{
+	List<Rule<string>> rules = new List<Rule<string>>();
+
+	rules.Add(new Rule<string>("String contains 'hello'", (s) => {
+		return s.Contains("hello");
+	}, () => { 
+		Console.WriteLine("String contains 'hello'");
+	}));
+
+	rules.Add(new Rule<string>("String does not contain 'hello'", 
+		(s) => {
+			return s.Contains("hello") == false;
+		},
+		() => {
+			Console.WriteLine("String does not contain 'hello'");
+		}
+	));
+
+	Console.WriteLine("Enter a string:");
+	string input = Console.ReadLine();
+
+	foreach (Rule<string> rule in rules)
+	{
+	    if (rule.Evaluate(input))
+	    {
+	        rule.Execute();
+	    }
+	}
+}
+
+// Define other methods and classes here
+public class Rule<T>
+{
+    private string name;
+    private Predicate<T> condition;
+    private Action action;
+
+    public Rule(string name, Predicate<T> condition, Action action)
+    {
+        this.name = name;
+        this.condition = condition;
+        this.action = action;
+    }
+
+    public bool Evaluate(T input)
+    {
+        return condition(input);
+    }
+
+    public void Execute()
+    {
+        action();
+    }
+}
+```
 
 
