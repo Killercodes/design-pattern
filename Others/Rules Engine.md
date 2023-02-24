@@ -58,3 +58,70 @@ In this example, we define two Rule<string> objects that evaluate whether a stri
 We evaluate each rule by calling its Evaluate method with the input string. If the rule's condition is satisfied, we execute its action by calling its Execute method.
 
 Note that this implementation is still very simple and doesn't handle more complex rule-based systems. However, it demonstrates how you can use a generic condition to define rules for different types of input data.
+    
+    
+## Another Example
+
+```cs   
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Define the rules
+        List<Rule> rules = new List<Rule>();
+        rules.Add(new Rule("Number is greater than 10", (int number) => number > 10, () => Console.WriteLine("Number is greater than 10")));
+        rules.Add(new Rule("Number is less than or equal to 10", (int number) => number <= 10, () => Console.WriteLine("Number is less than or equal to 10")));
+
+        // Prompt the user to input a number
+        Console.WriteLine("Enter a number:");
+        int number = Convert.ToInt32(Console.ReadLine());
+
+        // Evaluate the rules
+        foreach (Rule rule in rules)
+        {
+            if (rule.Evaluate(number))
+            {
+                rule.Execute();
+            }
+        }
+    }
+}
+
+class Rule
+{
+    private string name;
+    private Func<int, bool> condition;
+    private Action action;
+
+    public Rule(string name, Func<int, bool> condition, Action action)
+    {
+        this.name = name;
+        this.condition = condition;
+        this.action = action;
+    }
+
+    public bool Evaluate(int number)
+    {
+        return condition(number);
+    }
+
+    public void Execute()
+    {
+        action();
+    }
+}
+```
+
+In this implementation, we define the rules as instances of a Rule class. Each Rule object contains a name, a condition, and an action. The condition is a function that takes an integer as input and returns a boolean value indicating whether the rule's condition is satisfied. The action is a function that executes the rule's action.
+
+We create two Rule objects representing the two rules in our original logic. We then prompt the user to input a number and store it in the number variable.
+
+We evaluate each rule by calling its Evaluate method with the input number. If the rule's condition is satisfied, we execute its action by calling its Execute method.
+
+Note that this implementation is very simple and is not intended to be used for complex rule-based systems. However, it provides a basic framework for defining and evaluating rules in C#.
+
+
+
