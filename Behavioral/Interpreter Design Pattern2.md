@@ -3,27 +3,80 @@ Interpreter Design Pattern
 
 The Interpreter pattern is a design pattern that specifies how to evaluate sentences in a language. It is useful when you have a language to represent data and you need to perform operations on it. The pattern specifies that you create an interpreter that can parse the language and execute the operations.
 
-The Interpreter pattern consists of three main components: the context, the expression, and the interpreter. The context is where the data is stored and where the operations are performed. The expression is a representation of a sentence in the language, and the interpreter is responsible for interpreting the expression and executing the operations.
+The Interpreter pattern consists of three main components: the `context`, the `expression`, and the `interpreter`. The context is where the data is stored and where the operations are performed. The expression is a representation of a sentence in the language, and the interpreter is responsible for interpreting the expression and executing the operations.
 
-The Interpreter pattern is often used in combination with the Composite pattern, which allows you to build complex expressions from simpler ones.
+> The Interpreter pattern is often used in combination with the Composite pattern, which allows you to build complex expressions from simpler ones.
 
 The Interpreter pattern can be useful in situations where you need to perform operations on data that is represented in a custom language, or in situations where you need to implement a custom language for a specific task.
 
 
-The Interpreter design pattern is a behavioral pattern that is used to define a language or notation, and interpret expressions or sentences in that language. It is commonly used in language processors, compilers, and interpreters.
+> The Interpreter design pattern is a behavioral pattern that is used to define a language or notation, and interpret expressions or sentences in that language. It is commonly used in language processors, compilers, and interpreters.
 
 The pattern involves defining a language grammar, and then implementing a parser that can interpret the expressions in the language. The parser breaks down the expressions into a parse tree, and then uses the tree to execute the expressions.
 
+## Example 1
+```cs
+/// The 'AbstractExpression' abstract class
+/// </summary>
+public abstract class AbstractExpression
+{
+    public abstract void Interpret(Context context);
+}
+
+/// <summary>
+/// The 'TerminalExpression' class
+/// </summary>
+public class TerminalExpression : AbstractExpression
+{
+    public override void Interpret(Context context)
+    {
+		
+        Console.WriteLine("Called Terminal.Interpret()");
+		$"{context.Id} - {context.Message} - {context.EntityName}".Dump("Called Terminal.Interpret()");
+    }
+}
+
+/// <summary>
+/// The 'NonterminalExpression' class
+/// </summary>
+public class NonterminalExpression : AbstractExpression
+{
+    public override void Interpret(Context context)
+    {
+        Console.WriteLine("Called Nonterminal.Interpret()");
+		$"{context.Id} - {context.Message} - {context.EntityName}".Dump("Called Nonterminal.Interpret()");
+    }
+}
+
+void Main()
+{	
+	Context context = new Context();
+	context.Message = "CREATE";
+	context.EntityName = "Account";
+	
+    // Usually a tree 
+    List<AbstractExpression> list = new List<AbstractExpression>();
+	
+    // Populate 'abstract syntax tree' 
+    list.Add(new TerminalExpression());
+    list.Add(new NonterminalExpression());
+    list.Add(new TerminalExpression());
+    list.Add(new TerminalExpression());
+	
+    // Interpret
+    foreach (AbstractExpression exp in list)
+    {
+        exp.Interpret(context);
+    }
+}
+```
+
+## Example 2
 The Interpreter pattern involves several key components:
-
 1. Abstract Expression: This defines the base interface for all expressions in the language.
-
 2. Terminal Expression: These are the smallest expressions in the language, and can be evaluated without needing to be broken down further.
-
 3. Non-Terminal Expression: These are expressions that are made up of one or more sub-expressions.
-
 4. Context: This holds any information or state needed by the interpreter.
-
 5. Client: This provides the input to the interpreter.
 
 The Interpreter pattern can be useful when you need to define a new language, or extend an existing language. It can also be used when you need to implement complex rules or logic that would be difficult to implement using other design patterns.
