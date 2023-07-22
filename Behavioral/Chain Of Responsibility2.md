@@ -5,36 +5,27 @@ The Chain of Responsibility pattern is a behavioral design pattern that allows a
 The basic idea behind this pattern is that a chain of handler objects is created to handle requests. When a request comes in, it is passed down the chain of handlers until one of the handlers can process it. Each handler decides whether to process the request or pass it on to the next handler in the chain.
 
 The Chain of Responsibility pattern consists of three main components:
-
 1. Handler: Defines an interface for handling requests and optionally implements the successor link to the next handler in the chain.
-
 2. ConcreteHandler: Implements the Handler interface and handles requests it is responsible for. It can also forward requests to its successor.
-
 3. Client: Sends requests to the first handler in the chain.
 
 The advantages of using the Chain of Responsibility pattern include:
-
 1. Decouples the sender of a request from its receiver by allowing more than one object to handle the request.
-
 2. Simplifies object management by allowing objects to be added or removed from the chain dynamically.
-
 3. Provides a flexible way of passing requests along a chain of objects until one object can handle it.
-
 4. Promotes loose coupling between objects, making the code more maintainable and easier to modify.
 
 Some common examples of the Chain of Responsibility pattern include:
-
 1. Event handlers in a GUI framework.
-
 2. Middleware in web frameworks.
-
 3. Error handling in software systems.
-
 4.Logging and auditing frameworks.
 
 ---
 
-## c#
+## c# 
+
+### Example 1
 here's a simple example of the Chain of Responsibility pattern in C#:
 ```cs
 using System;
@@ -120,6 +111,99 @@ namespace ChainOfResponsibilityPattern
 This example demonstrates the Chain of Responsibility pattern by creating three concrete handlers that handle requests with certain criteria. Each concrete handler is set up to have a successor, which it will delegate to if it can't handle a request on its own. The client (in this case, the Main method) creates the chain of handlers by setting the successor of the first handler to be the second, and the successor of the second to be the third.
 
 When a request is made to the first handler, it either handles the request or delegates it to the next handler in the chain, and so on until a handler is able to handle the request or the end of the chain is reached.
+
+### Example 2
+The Chain of Responsibility design pattern avoids coupling the sender of a request to its receiver by giving more than one object a chance to handle the request. 
+This pattern chains the receiving objects and passes the request along the chain until an object handles it
+
+```cs
+/// <summary>
+/// The 'Handler' abstract class
+/// </summary>
+public abstract class Handler
+{
+    protected Handler successor;
+    public void SetSuccessor(Handler successor)
+    {
+        this.successor = successor;
+    }
+    public abstract void HandleRequest(int request);
+}
+
+/// <summary>
+/// The 'ConcreteHandler1' class
+/// </summary>
+public class ConcreteHandler1 : Handler
+{
+    public override void HandleRequest(int request)
+    {
+        if (request >= 0 && request < 10)
+        {
+            Console.WriteLine("{0} handled request {1}",
+                this.GetType().Name, request);
+        }
+        else if (successor != null)
+        {
+            successor.HandleRequest(request);
+        }
+    }
+}
+
+/// <summary>
+/// The 'ConcreteHandler2' class
+/// </summary>
+public class ConcreteHandler2 : Handler
+{
+    public override void HandleRequest(int request)
+    {
+        if (request >= 10 && request < 20)
+        {
+            Console.WriteLine("{0} handled request {1}",
+                this.GetType().Name, request);
+        }
+        else if (successor != null)
+        {
+            successor.HandleRequest(request);
+        }
+    }
+}
+
+/// <summary>
+/// The 'ConcreteHandler3' class
+/// </summary>
+public class ConcreteHandler3 : Handler
+{
+    public override void HandleRequest(int request)
+    {
+        if (request >= 20 && request < 30)
+        {
+            Console.WriteLine("{0} handled request {1}",
+                this.GetType().Name, request);
+        }
+        else if (successor != null)
+        {
+            successor.HandleRequest(request);
+        }
+    }
+}
+```
+
+The Main Method 
+```cs
+// Setup Chain of Responsibility
+Handler h1 = new ConcreteHandler1();
+Handler h2 = new ConcreteHandler2();
+Handler h3 = new ConcreteHandler3();
+h1.SetSuccessor(h2);
+h2.SetSuccessor(h3);
+// Generate and process request
+int[] requests = { 2, 5, 14, 22, 18, 3, 27, 20 };
+foreach (int request in requests)
+{
+    h1.HandleRequest(request);
+}
+
+```
 
 
 ---
