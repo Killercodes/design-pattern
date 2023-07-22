@@ -38,5 +38,8 @@ class Program
 }
 
 ```
+In `if(_loaded)` if the boolean instance variable jobInProgress is set to false, then the job() will return without having executed any commands and therefore keeping the object's state the same.
+
+If `_loaded` variable is set to true, then the Example object is in the correct state to execute additional code in the `job()`
 
 ---
