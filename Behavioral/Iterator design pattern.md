@@ -3,23 +3,173 @@ Iterator design pattern
 
 The Iterator design pattern is a behavioral pattern that provides a way to access the elements of an aggregate object (such as a list) sequentially without exposing its underlying representation. The key idea of the Iterator pattern is to extract the responsibility of accessing and iterating over elements of a collection from the collection itself into an Iterator object, which allows the client to access elements of the collection in a uniform manner regardless of the collection's implementation.
 
+
+> **Usage examples:** The pattern is very common in C# code. Many frameworks and libraries use it to provide a standard way for traversing their collections.
+
+> **Identification:** Iterator is easy to recognize by the navigation methods (such as next, previous and others). Client code that uses iterators might not have direct access to the collection being traversed.
+
 The Iterator pattern consists of two main components: the Iterator and the Aggregate. The Iterator provides an interface for accessing and traversing the elements of a collection, and the Aggregate defines an interface for creating an Iterator.
 
 Using the Iterator pattern can help to simplify client code and make it more flexible, by decoupling the client code from the specific implementation of the collection being iterated over. It can also make it easier to add new types of collections to an application without having to modify the client code.
 
 Some examples of the Iterator pattern in action include the built-in iterators in programming languages such as Python and Java, as well as the foreach loop in C#.
 
----
 
+
+
+
+## Example
+```cs
+abstract class Iterator : IEnumerator
+{
+    object IEnumerator.Current => Current();
+
+    // Returns the key of the current element
+    public abstract int Key();
+    
+    // Returns the current element
+    public abstract object Current();
+    
+    // Move forward to next element
+    public abstract bool MoveNext();
+    
+    // Rewinds the Iterator to the first element
+    public abstract void Reset();
+}
+
+abstract class IteratorAggregate : IEnumerable
+{
+    // Returns an Iterator or another IteratorAggregate for the implementing
+    // object.
+    public abstract IEnumerator GetEnumerator();
+}
+
+// Concrete Iterators implement various traversal algorithms. These classes
+// store the current traversal position at all times.
+class AlphabeticalOrderIterator : Iterator
+{
+    private WordsCollection _collection;
+    
+    // Stores the current traversal position. An iterator may have a lot of
+    // other fields for storing iteration state, especially when it is
+    // supposed to work with a particular kind of collection.
+    private int _position = -1;
+    
+    private bool _reverse = false;
+
+    public AlphabeticalOrderIterator(WordsCollection collection, bool reverse = false)
+    {
+        this._collection = collection;
+        this._reverse = reverse;
+
+        if (reverse)
+        {
+            this._position = collection.getItems().Count;
+        }
+    }
+    
+    public override object Current()
+    {
+        return this._collection.getItems()[_position];
+    }
+
+    public override int Key()
+    {
+        return this._position;
+    }
+    
+    public override bool MoveNext()
+    {
+        int updatedPosition = this._position + (this._reverse ? -1 : 1);
+
+        if (updatedPosition >= 0 && updatedPosition < this._collection.getItems().Count)
+        {
+            this._position = updatedPosition;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    public override void Reset()
+    {
+        this._position = this._reverse ? this._collection.getItems().Count - 1 : 0;
+    }
+}
+
+// Concrete Collections provide one or several methods for retrieving fresh
+// iterator instances, compatible with the collection class.
+class WordsCollection : IteratorAggregate
+{
+    List<string> _collection = new List<string>();
+    
+    bool _direction = false;
+    
+    public void ReverseDirection()
+    {
+        _direction = !_direction;
+    }
+    
+    public List<string> getItems()
+    {
+        return _collection;
+    }
+    
+    public void AddItem(string item)
+    {
+        this._collection.Add(item);
+    }
+    
+    public override IEnumerator GetEnumerator()
+    {
+        return new AlphabeticalOrderIterator(this, _direction);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // The client code may or may not know about the Concrete Iterator
+        // or Collection classes, depending on the level of indirection you
+        // want to keep in your program.
+        var collection = new WordsCollection();
+        collection.AddItem("First");
+        collection.AddItem("Second");
+        collection.AddItem("Third");
+
+        Console.WriteLine("Straight traversal:");
+
+        foreach (var element in collection)
+        {
+            Console.WriteLine(element);
+        }
+
+        Console.WriteLine("\nReverse traversal:");
+
+        collection.ReverseDirection();
+
+        foreach (var element in collection)
+        {
+            Console.WriteLine(element);
+        }
+    }
+}
+
+```
+
+## Example 2
 The Iterator design pattern is a behavioral pattern that provides a way to access the elements of an aggregate object without exposing its underlying implementation. It provides a standard interface for traversing a collection of objects, without having to expose the underlying implementation details of the collection.
 
-The Iterator pattern is based on the concept of iterators, which are objects that can be used to traverse a collection of elements. An iterator provides a way to access the elements of a collection one by one, without having to know the details of how the collection is implemented.
+- The Iterator pattern is based on the concept of iterators, which are objects that can be used to traverse a collection of elements. An iterator provides a way to access the elements of a collection one by one, without having to know the details of how the collection is implemented.
 
-The main advantage of using the Iterator pattern is that it decouples the client code from the implementation of the collection, making it possible to change the implementation of the collection without affecting the client code.
+- The main advantage of using the Iterator pattern is that it decouples the client code from the implementation of the collection, making it possible to change the implementation of the collection without affecting the client code.
 
-The Iterator pattern consists of three main components: the Iterator interface, the ConcreteIterator class, and the Aggregate interface. The Iterator interface defines a standard interface for iterating over a collection of objects. The ConcreteIterator class implements the Iterator interface and provides a concrete implementation of the iteration algorithm. The Aggregate interface defines a standard interface for creating iterators over a collection of objects.
+- The Iterator pattern consists of three main components: the Iterator interface, the ConcreteIterator class, and the Aggregate interface. The Iterator interface defines a standard interface for iterating over a collection of objects. The ConcreteIterator class implements the Iterator interface and provides a concrete implementation of the iteration algorithm. The Aggregate interface defines a standard interface for creating iterators over a collection of objects.
 
-The Iterator pattern is commonly used in modern programming languages, such as Java and C#, to provide a way to traverse collections of objects. It is particularly useful when dealing with large collections of objects, where it is impractical to load all the objects into memory at once.
+- The Iterator pattern is commonly used in modern programming languages, such as Java and C#, to provide a way to traverse collections of objects. It is particularly useful when dealing with large collections of objects, where it is impractical to load all the objects into memory at once.
 
 Some common use cases for the Iterator pattern include:
 
@@ -30,7 +180,8 @@ Some common use cases for the Iterator pattern include:
 
 Overall, the Iterator pattern is a powerful and flexible pattern that can be used to solve a wide range of problems related to traversing collections of objects.
 
-## C#
+
+### C#
 ```cs
 using System;
 using System.Collections;
@@ -119,7 +270,7 @@ The BookIterator class is a private nested class within the BookCollection class
 
 In the Main method, we create a BookCollection object and add some books to it. We then use a foreach loop to iterate over the collection using the iterator object returned by the GetEnumerator method of the BookCollection class.
 
-## javascript
+### javascript
 
 ```js
 // Iterator interface
@@ -186,7 +337,7 @@ while (iterator.hasNext()) {
 ```
 
 
-## Python
+### Python
 
 ```py
 # Iterator interface
