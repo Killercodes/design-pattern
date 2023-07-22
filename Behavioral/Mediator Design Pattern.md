@@ -3,34 +3,155 @@ Mediator Design Pattern
 
 The Mediator pattern is a behavioral design pattern that allows communication between objects without them having to directly reference each other. It promotes loose coupling and reduces dependencies between objects, making it easier to maintain and extend the code.
 
+
+> **Usage examples:** The most popular usage of the Mediator pattern in C# code is facilitating communications between GUI components of an app. The synonym of the Mediator is the Controller part of MVC pattern.
+
 The Mediator pattern defines an object (the mediator) that encapsulates the communication between a set of objects (the colleagues). The colleagues only communicate with the mediator, which then handles the communication between them.
 
 The Mediator pattern is useful in situations where a complex system of objects needs to communicate with each other, but direct communication between these objects would result in a tightly coupled system that's difficult to maintain and modify.
 
-Some common examples of Mediator pattern include chat rooms, air traffic control systems, and event-driven systems.
+
 
 In summary, the Mediator pattern provides a way to decouple objects and promote communication through a central object, resulting in a more flexible and maintainable system.
 
----
+- Some common examples of Mediator pattern include chat rooms, air traffic control systems, and event-driven systems.
 
-The Mediator design pattern is a behavioral pattern that allows communication between different objects in a system without them being directly coupled to each other. It promotes loose coupling by defining a mediator object that handles communication between the objects, allowing them to interact with each other indirectly.
+- In the Mediator pattern, each object doesn't communicate with other objects directly but through the mediator object. The mediator object acts as a central hub that receives requests from one object and sends it to other objects involved in the request. The pattern promotes decoupling and flexibility in a system, allowing for easier maintenance and modification.
 
-In the Mediator pattern, each object doesn't communicate with other objects directly but through the mediator object. The mediator object acts as a central hub that receives requests from one object and sends it to other objects involved in the request. The pattern promotes decoupling and flexibility in a system, allowing for easier maintenance and modification.
+- The Mediator pattern is useful in scenarios where many objects need to interact with each other but direct coupling between them would create a complex and tangled system. It is also useful when adding new objects to the system or modifying existing ones.
 
-The Mediator pattern is useful in scenarios where many objects need to interact with each other but direct coupling between them would create a complex and tangled system. It is also useful when adding new objects to the system or modifying existing ones.
+- Some common examples of the Mediator pattern in practice include chat rooms, where users communicate with each other through a central server, and air traffic control systems, where planes communicate with each other through a central system.
 
-Some common examples of the Mediator pattern in practice include chat rooms, where users communicate with each other through a central server, and air traffic control systems, where planes communicate with each other through a central system.
 
+## Example 1
+
+```cs
+// The Mediator interface declares a method used by components to notify the
+// mediator about various events. The Mediator may react to these events and
+// pass the execution to other components.
+public interface IMediator
+{
+    void Notify(object sender, string ev);
+}
+
+// Concrete Mediators implement cooperative behavior by coordinating several
+// components.
+class ConcreteMediator : IMediator
+{
+    private Component1 _component1;
+
+    private Component2 _component2;
+
+    public ConcreteMediator(Component1 component1, Component2 component2)
+    {
+        this._component1 = component1;
+        this._component1.SetMediator(this);
+        this._component2 = component2;
+        this._component2.SetMediator(this);
+    } 
+
+    public void Notify(object sender, string ev)
+    {
+        if (ev == "A")
+        {
+            Console.WriteLine("Mediator reacts on A and triggers folowing operations:");
+            this._component2.DoC();
+        }
+        if (ev == "D")
+        {
+            Console.WriteLine("Mediator reacts on D and triggers following operations:");
+            this._component1.DoB();
+            this._component2.DoC();
+        }
+    }
+}
+
+// The Base Component provides the basic functionality of storing a
+// mediator's instance inside component objects.
+class BaseComponent
+{
+    protected IMediator _mediator;
+
+    public BaseComponent(IMediator mediator = null)
+    {
+        this._mediator = mediator;
+    }
+
+    public void SetMediator(IMediator mediator)
+    {
+        this._mediator = mediator;
+    }
+}
+
+// Concrete Components implement various functionality. They don't depend on
+// other components. They also don't depend on any concrete mediator
+// classes.
+class Component1 : BaseComponent
+{
+    public void DoA()
+    {
+        Console.WriteLine("Component 1 does A.");
+
+        this._mediator.Notify(this, "A");
+    }
+
+    public void DoB()
+    {
+        Console.WriteLine("Component 1 does B.");
+
+        this._mediator.Notify(this, "B");
+    }
+}
+
+class Component2 : BaseComponent
+{
+    public void DoC()
+    {
+        Console.WriteLine("Component 2 does C.");
+
+        this._mediator.Notify(this, "C");
+    }
+
+    public void DoD()
+    {
+        Console.WriteLine("Component 2 does D.");
+
+        this._mediator.Notify(this, "D");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // The client code.
+        Component1 component1 = new Component1();
+        Component2 component2 = new Component2();
+        new ConcreteMediator(component1, component2);
+
+        Console.WriteLine("Client triggers operation A.");
+        component1.DoA();
+
+        Console.WriteLine();
+
+        Console.WriteLine("Client triggers operation D.");
+        component2.DoD();
+    }
+}
+```
+
+
+
+## Example 2
 The Mediator pattern typically consists of the following components:
+- Mediator: defines the interface for communicating with Colleague objects.
+- ConcreteMediator: implements the Mediator interface and maintains a reference to all Colleague objects.
+- Colleague: defines the interface for communicating with the Mediator object.
+- ConcreteColleague: implements the Colleague interface and communicates with other Colleague objects through the Mediator object.
+- By using the Mediator pattern, communication between objects can be simplified, resulting in a more modular and maintainable system.
 
-Mediator: defines the interface for communicating with Colleague objects.
-ConcreteMediator: implements the Mediator interface and maintains a reference to all Colleague objects.
-Colleague: defines the interface for communicating with the Mediator object.
-ConcreteColleague: implements the Colleague interface and communicates with other Colleague objects through the Mediator object.
-By using the Mediator pattern, communication between objects can be simplified, resulting in a more modular and maintainable system.
 
-
-## C#
+### C#
 
 ```cs
 using System;
@@ -156,7 +277,7 @@ Finally, the Client class creates the concrete mediator and colleagues, sets the
 
 This example shows how the Mediator pattern can be used to decouple communication between objects and promote more flexible and reusable code.
 
-## Javascript
+### Javascript
 
 ```js
 class Mediator {
@@ -234,7 +355,7 @@ colleague2.send('Hi from colleague 2');
 ```
 
 
-## Python
+### Python
 ```py
 class Mediator:
     def __init__(self):
