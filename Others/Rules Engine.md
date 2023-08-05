@@ -1,7 +1,16 @@
 **Rules Engine in C#**
 ===
 
-It is an expert-system program, which runs the rules on the data and if any condition matches then it executes the corresponding actions.
+A rules engine is a software system that executes one or more business rules in a runtime production environment. The rules might come from legal regulation (“An employee can be fired for any reason or no reason but not for an illegal reason”), company policy (“All customers that spend more than $100 at one time will receive a 10% discount”), or other sources. 
+
+A business rule system enables these company policies and other operational decisions to be defined, tested, executed and maintained separately from application code1.
+
+> It is an expert-system program, which runs the rules on the data and if any condition matches then it executes the corresponding actions.
+
+Rules engines are designed to be highly flexible and can manage complex decision-making processes. They allow you to define, manage, and execute business rules in a way that is easy to understand and maintain. This can help you to improve the agility of your business by allowing you to quickly adapt to changing business requirements1.
+
+There are many different types of rules engines available, including forward-chaining, backward-chaining, and hybrid systems.
+
 
 ```cs
 public class Rule<T>
