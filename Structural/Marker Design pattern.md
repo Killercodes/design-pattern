@@ -5,6 +5,15 @@ The Marker interface pattern is a design pattern used with languages that provid
 
 A marker interface, also known as a tagging interface, is an empty interface that is used to “mark” classes that implement the interface. This allows methods that interact with instances of the class to test for the existence of the interface and behave accordingly 1.
 
+## Intent
+Using empty interfaces as markers to distinguish special treated objects.
+
+## Applicability
+Use the Marker Interface pattern when
+- you want to identify the special objects from normal objects (to treat them differently)
+- you want to mark that some object is available for certain sort of operations
+
+## Example
 An example of a marker interface in Java is the Serializable interface. A class implements this interface to indicate that its non-transient data members can be written to an ObjectOutputStream. The ObjectOutputStream private method writeObject0 contains a series of instanceof tests to determine writeability, one of which looks for the Serializable interface. If any of these tests fails, the method throws a NotSerializableException 
 
 In C#, you can use an empty interface to create a marker interface. Here’s an example:
